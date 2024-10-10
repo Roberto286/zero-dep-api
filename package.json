@@ -1,0 +1,15 @@
+{
+  "name": "zero_dep_node_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --env-file=.env .",
+    "dev": "node --env-file=.env --watch-path=./src --watch-preserve-output ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
