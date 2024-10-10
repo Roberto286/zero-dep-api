@@ -1,9 +1,8 @@
 import { Router } from "./lib/router.js";
 import { Server } from "./lib/server.js";
 import { HttpMethods } from "./enums/http-methods.enum.js";
-import * as config from '../config.js'
+import { PORT } from '../config.js'
 
-const { PORT } = config;
 
 const router = Router();
 const server = Server();

@@ -1,3 +1,1 @@
-export default {
-    PORT: process.env.PORT || 5687
-}
+export const PORT = process.env.PORT || 5687;
