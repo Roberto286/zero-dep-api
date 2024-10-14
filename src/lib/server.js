@@ -1,25 +1,44 @@
-import { createServer } from "http";
-import { Router, routes } from "./router.js";
+import { Server } from "http";
+import { Router } from "./router.js";
 import { HttpMethods } from "../enums/http-methods.enum.js";
 
-const router = Router();
-
-const extendServer = (server) => {
-    server.get = (path, handler) => {
-        router.register(path, HttpMethods.GET, handler)
-    };
-};
-
-export const Server = () => {
-    const server = createServer((req, res) => {
-        routes.forEach(({ method, path, handler }) => {
-            if(req.method === method && req.url === path) {
+class CustomServer extends Server {
+    constructor() {
+        super((req, res) => {
+            const { handler } = Router.findHandler(req) || {};
+            if(handler) {
+                this.enhanceResObject(res);
                 handler(req, res);
+            }else {
+                this.notFound(res);
             }
         });
-    });
 
-    extendServer(server);
+        Object.values(HttpMethods).forEach(method => {
+            this[method.toLowerCase()] = (path, handler) => {
+                Router.register(path, method, handler);
+            };
+        });
+    }
 
-    return server;
-};
+    static getInstance() {
+        if(!CustomServer.instance) {
+            CustomServer.instance = new CustomServer();
+        }
+        return CustomServer.instance;
+    }
+
+    enhanceResObject(res) {
+        res.send = (data, statusCode = 200) => {
+            res.writeHead(statusCode, { "Content-Type": "application/json" });
+            res.end(JSON.stringify(data));
+        }
+    }
+
+    notFound(res) {
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end("Resource Not Found");
+    }
+}
+
+export const getServer = () => CustomServer.getInstance();

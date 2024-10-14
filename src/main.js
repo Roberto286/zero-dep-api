@@ -1,13 +1,14 @@
-import { Server } from "./lib/server.js";
+"use strict";
+import { getServer } from "./lib/server.js";
 import { PORT } from '../config.js'
+import './books/controllers.js'
 
-const server = Server();
+const server = getServer();
 
 server.get('/', (req, res) => {
-    res.write("Hello world")
-    res.end()
+    res.send("hello world")
 })
 
-server.listen(PORT, undefined, undefined, () => {
+server.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 })

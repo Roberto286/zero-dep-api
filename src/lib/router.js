@@ -1,14 +1,11 @@
-import { HttpMethods } from "../enums/http-methods.enum.js";
-
 export const routes = [];
 
-export const Router = () => {
-    return {
-        register: (path, method, handler) => {
-            if(!HttpMethods[method]) {
-                throw new Error(`Method ${method} is not supported`)
-            }
-            routes.push({ path, method, handler })
-        }
+export class Router {
+    static register(path, method, handler) {
+        routes.push({ path, method, handler });
     }
-} 
+
+    static findHandler(req) {
+        return routes.find(({ method, path }) => req.method === method && req.url === path);
+    }
+}
