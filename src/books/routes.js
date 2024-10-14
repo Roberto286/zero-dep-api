@@ -1,32 +1,40 @@
 import { getServer } from "../lib/server.js";
+import { BookActions } from "./actions.js";
 
 const server = getServer();
+const { FindAll, FindById, Create, Delete, Patch, Update } = new BookActions()
 
 //CREATE
 server.post('/books', (req, res) => {
-    res.write("Hello world")
-    res.end()
+    let newBook = {}
+    newBook = Create(newBook)
+    res.send(newBook)
 })
 
 //READ
 server.get('/books', (req, res) => {
-    res.send([])
+    const books = FindAll();
+    res.send(books)
 })
 
 server.get('/books/:id', (req, res) => {
-    res.send({})
+    const book = FindById('')
+    res.send(book)
 })
 
 //UPDATE
-server.patch('/books/:id', (req, res) => {
-    res.send({})
-})
-
 server.put('/books/:id', (req, res) => {
     res.send({})
 })
 
+server.patch('/books/:id', (req, res) => {
+    const book = {}
+    Patch(book)
+    res.send(book)
+})
+
 //DELETE
 server.delete('/books/:id', (req, res) => {
-    res.send({})
+    Delete('');
+    res.send()
 })
