@@ -18,6 +18,8 @@ server.get('/books', (req, res) => {
 })
 
 server.get('/books/:id', (req, res) => {
+    const { id } = req.params;
+    console.log(id)
     const book = FindById('')
     res.send(book)
 })
