@@ -30,19 +30,6 @@ export class Router {
         }
     }
 
-    static matchRoute(routePath, requestPath) {
-        const routeParts = routePath.split('/').filter(Boolean);
-        const requestParts = requestPath.split('/').filter(Boolean);
-
-        if(routeParts.length !== requestParts.length) {
-            return false;
-        }
-
-        return routeParts.every((routePart, index) => {
-            return routePart.startsWith(':') || routePart === requestParts[index];
-        });
-    }
-
     static extractParams(path) {
         const params = [];
         const parts = path.split('/').filter(Boolean);

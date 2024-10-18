@@ -1,23 +1,37 @@
 import { Server } from "http";
 import { Router } from "./router.js";
 import { HttpMethods } from "../enums/http-methods.enum.js";
+import { parseBody } from "./body-parser.js";
+import { enhanceResponse } from "./response-enhancer.js";
 
 class CustomServer extends Server {
     static #instance = null;
 
     constructor() {
-        super((req, res) => {
-            const handler = Router.findHandler(req, res) || {};
-            if(handler) {
-                this.#enhanceResObject(res);
-                handler(req, res);
-            }else {
-                this.#notFound(res);
-            }
-        });
-
+        super();
         this.#registerHttpMethods();
+        this.on('request', this.#handleRequest.bind(this));
         CustomServer.#instance = this;
+    }
+
+    async #handleRequest(req, res) {
+        try {
+            await this.#applyMiddleware(req, res);
+            const handler = Router.findHandler(req, res);
+
+            if(handler) {
+                await handler(req, res);
+            }else {
+                this.#sendNotFound(res);
+            }
+        }catch(error) {
+            this.#handleError(error, res);
+        }
+    }
+
+    async #applyMiddleware(req, res) {
+        enhanceResponse(res);
+        req.body = await parseBody(req);
     }
 
     #registerHttpMethods() {
@@ -28,21 +42,18 @@ class CustomServer extends Server {
         });
     }
 
-    #enhanceResObject(res) {
-        res.send = (data, statusCode = 200) => {
-            res.writeHead(statusCode, { "Content-Type": "application/json" });
-            res.end(JSON.stringify(data));
-        }
+    #sendNotFound(res) {
+        res.send("Resource not found", 404)
     }
 
-    #notFound(res) {
-        res.writeHead(404, { "Content-Type": "text/plain" });
-        res.end("Resource Not Found");
+    #handleError(error, res) {
+        console.error(error);
+        res.send("Internal server error", 500)
     }
 
-    static get instance() {
+    static getInstance() {
         return CustomServer.#instance || new CustomServer();
     }
 }
 
-export const getServer = () => CustomServer.instance;
+export const getServer = CustomServer.getInstance;
