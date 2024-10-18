@@ -7,7 +7,7 @@ class CustomServer extends Server {
 
     constructor() {
         super((req, res) => {
-            const { handler } = Router.findHandler(req, res) || {};
+            const handler = Router.findHandler(req, res) || {};
             if(handler) {
                 this.#enhanceResObject(res);
                 handler(req, res);
@@ -29,7 +29,6 @@ class CustomServer extends Server {
     }
 
     #enhanceResObject(res) {
-        //FIXME res.send is not working
         res.send = (data, statusCode = 200) => {
             res.writeHead(statusCode, { "Content-Type": "application/json" });
             res.end(JSON.stringify(data));

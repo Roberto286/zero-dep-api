@@ -14,17 +14,18 @@ export class Router {
         Router.routes.set(`${method}:${path}`, { method, regex, params, handler, path });
     }
 
-    static findHandler(req, res) {
+    static findHandler(req) {
         const parsedUrl = url.parse(req.url, true);
         const path = parsedUrl.pathname.substring(1);
-        const method = req.method;
+        const reqMethod = req.method;
 
         for(const [_, route] of Router.routes) {
-            if(route.method === method) {
-                const match = path.match(route.regex);
+            const { regex, method, handler } = route;
+            if(method === reqMethod) {
+                const match = path.match(regex);
                 if(match) {
-                    req.params = Router.extractParamValues(route.path, path);
-                    return route.handler(req, res);
+                    req.params = Router.extractParamValues(path, path);
+                    return handler;
                 }
             }
         }
