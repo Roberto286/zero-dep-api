@@ -16,7 +16,7 @@ class CustomServer extends Server {
 
     async #handleRequest(req, res) {
         try {
-            await this.#applyMiddleware(req, res);
+            await this.#applyMiddlewares(req, res);
             const handler = Router.findHandler(req, res);
 
             if(handler) {
@@ -29,7 +29,7 @@ class CustomServer extends Server {
         }
     }
 
-    async #applyMiddleware(req, res) {
+    async #applyMiddlewares(req, res) {
         enhanceResponse(res);
         req.body = await parseBody(req);
     }
