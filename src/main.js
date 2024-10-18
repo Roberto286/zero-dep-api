@@ -1,7 +1,7 @@
 "use strict";
 import { getServer } from "./lib/server.js";
 import { PORT } from '../config.js'
-import './books/routes.js'
+import './api/books/routes.js'
 
 const server = getServer();
 

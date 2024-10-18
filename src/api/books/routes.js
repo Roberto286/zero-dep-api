@@ -1,4 +1,4 @@
-import { getServer } from "../lib/server.js";
+import { getServer } from "../../lib/server.js";
 import { BookActions } from "./actions.js";
 
 const server = getServer();
@@ -26,7 +26,9 @@ server.get('/books/:id', (req, res) => {
 
 //UPDATE
 server.put('/books/:id', (req, res) => {
-    res.send({})
+    const book = {}
+    Update(book)
+    res.send(book)
 })
 
 server.patch('/books/:id', (req, res) => {

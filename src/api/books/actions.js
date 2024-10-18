@@ -1,4 +1,4 @@
-import { Crud } from "../lib/crud.js";
+import { Crud } from "../../lib/crud.js";
 
 export class BookActions extends Crud {
 
