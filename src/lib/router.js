@@ -4,30 +4,14 @@ export class Router {
 
     static routes = new Map();
 
-    static register(path, method, handler) {
+    static register(path, method, handler, options) {
         const parts = path.split('/').filter(Boolean);
         const params = Router.extractParams(path);
         const regex = new RegExp('^' + parts.map(part =>
             part.startsWith(':') ? '([^/]+)' : part
         ).join('/') + '$');
 
-        Router.routes.set(`${method}:${path}`, { method, regex, params, handler, path });
-    }
-
-    static findHandler(req) {
-        const parsedUrl = url.parse(req.url, true);
-        const path = parsedUrl.pathname.substring(1);
-        const method = req.method;
-
-        for(const [_, route] of Router.routes) {
-            if(route.method === method) {
-                const match = path.match(route.regex);
-                if(match) {
-                    req.params = Router.extractParamValues(route.path, path);
-                    return route.handler;
-                }
-            }
-        }
+        Router.routes.set(`${method}:${path}`, { method, regex, params, handler, path, options });
     }
 
     static extractParams(path) {
@@ -44,18 +28,19 @@ export class Router {
         return params;
     }
 
-    static extractParamValues(routePath, requestPath) {
-        const params = {};
-        const routeParts = routePath.split('/').filter(Boolean);
-        const requestParts = requestPath.split('/').filter(Boolean);
+    static findRoute(req) {
+        const parsedUrl = url.parse(req.url, true);
+        const path = parsedUrl.pathname.substring(1);
+        const method = req.method;
 
-        routeParts.forEach((part, index) => {
-            if(part.startsWith(':')) {
-                const paramName = part.slice(1);
-                params[paramName] = requestParts[index];
+        for(const [_, route] of Router.routes) {
+            if(route.method === method) {
+                const match = path.match(route.regex);
+                if(match) {
+                    req.params = Router.extractParams(route.path, path);
+                    return route;
+                }
             }
-        });
-
-        return params;
+        }
     }
 }

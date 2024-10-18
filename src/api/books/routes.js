@@ -9,7 +9,7 @@ server.post('/books', (req, res) => {
     let newBook = {}
     newBook = Create(newBook)
     res.send(newBook)
-})
+}, { schema: { id: '', value: '' } })
 
 //READ
 server.get('/books', (req, res) => {

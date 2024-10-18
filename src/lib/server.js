@@ -3,6 +3,7 @@ import { Router } from "./router.js";
 import { HttpMethods } from "../enums/http-methods.enum.js";
 import { parseBody } from "./body-parser.js";
 import { enhanceResponse } from "./response-enhancer.js";
+import { validateSchema } from "./schema-validator.js";
 
 class CustomServer extends Server {
     static #instance = null;
@@ -17,7 +18,12 @@ class CustomServer extends Server {
     async #handleRequest(req, res) {
         try {
             await this.#applyMiddlewares(req, res);
-            const handler = Router.findHandler(req, res);
+            const { handler, options } = Router.findRoute(req);
+            const { schema } = options;
+
+            if(schema && !validateSchema(req.body, schema)) {
+                return this.#sendBadRequest(res);
+            }
 
             if(handler) {
                 await handler(req, res);
@@ -36,8 +42,8 @@ class CustomServer extends Server {
 
     #registerHttpMethods() {
         Object.values(HttpMethods).forEach(method => {
-            this[method.toLowerCase()] = (path, handler) => {
-                Router.register(path, method, handler);
+            this[method.toLowerCase()] = (path, handler, schema) => {
+                Router.register(path, method, handler, schema);
             };
         });
     }
@@ -49,6 +55,10 @@ class CustomServer extends Server {
     #handleError(error, res) {
         console.error(error);
         res.send("Internal server error", 500)
+    }
+
+    #sendBadRequest(res) {
+        res.send("Bad request", 400)
     }
 
     static getInstance() {
