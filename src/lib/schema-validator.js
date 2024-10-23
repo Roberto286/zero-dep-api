@@ -1,23 +1,19 @@
 import { Types } from "../enums/types.enum.js";
 
-const isMatchingType = (value, expectedType) => {
-    return typeof expectedType === typeof value || typeof new expectedType === typeof value
-};
-
 export const validateSchema = (body, schema) => {
-    return Object.entries(body).every(([key, value]) => {
-        if(!Object.hasOwn(schema, key)) {
+    for(const key of Object.keys(body)) {
+        if(typeof schema === Types.OBJECT && !Object.hasOwn(schema, key)) {
             return false;
         }
 
-        if(!isMatchingType(value, schema[key])) {
+        const instance = new schema();
+        if(!Object.getOwnPropertyNames(instance).every(k => Object.keys(body).includes(k))) {
             return false;
         }
 
-        if(typeof value === Types.OBJECT) {
-            return validateSchema(value, schema[key] ?? {});
+        if((instance[key] === Types.OBJECT) || (typeof instance[key] === Types.FUNCTION)) {
+            return validateSchema(body[key], instance[key]);
         }
-
-        return true;
-    });
+    }
+    return true;
 };

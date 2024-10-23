@@ -1,5 +1,6 @@
 import { getServer } from "../../lib/server.js";
 import { BookActions } from "./actions.js";
+import { Book } from "./book.model.js";
 
 const server = getServer();
 const { FindAll, FindById, Create, Delete, Patch, Update } = new BookActions()
@@ -9,7 +10,7 @@ server.post('/books', (req, res) => {
     let newBook = {}
     newBook = Create(newBook)
     res.send(newBook)
-}, { schema: { id: '', value: '' } })
+}, { schema: Book })
 
 //READ
 server.get('/books', (req, res) => {

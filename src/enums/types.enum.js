@@ -7,4 +7,5 @@ export const Types = Object.freeze({
     SYMBOL: 'symbol',
     NULL: 'null',
     OBJECT: 'object',
+    FUNCTION: 'function'
 })
