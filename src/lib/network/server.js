@@ -1,6 +1,6 @@
 import { Server } from "http";
 import { Router } from "./router.js";
-import { HttpMethods } from "../enums/http-methods.enum.js";
+import { HttpMethods } from "../../enums/http-methods.enum.js";
 import { parseBody } from "./body-parser.js";
 import { enhanceResponse } from "./response-enhancer.js";
 import { validateSchema } from "./schema-validator.js";

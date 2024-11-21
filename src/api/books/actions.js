@@ -1,19 +1,17 @@
 import { Crud } from "../../lib/crud.js";
-import { getDatabase } from "../../lib/database.js";
+import { createBook, findAllBooks } from "../../lib/database/database.js";
+
 export class BookActions extends Crud {
   constructor() {
     super();
-    this.database = getDatabase();
   }
 
-  Create() {
-    this.database.exec("show tables");
-    return {};
+  Create(book) {
+    return createBook(book);
   }
 
   FindAll() {
-    console.log("Finding Books");
-    return [];
+    return findAllBooks();
   }
 
   FindById(id) {
